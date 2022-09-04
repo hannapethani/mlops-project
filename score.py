@@ -63,8 +63,15 @@ def load_model(run_id):
 
     logged_model = f'./mlruns/4/{run_id}/artifacts/models'
     model = mlflow.pyfunc.load_model(logged_model)
-    
+
     return model
+
+def preprocessor():
+
+    with open('models/preprocessor.b', 'rb') as f_in:
+        processor = pickle.load(f_in)
+
+    return processor
 
 def save_results(df, y_pred, run_id, output_file):
 
@@ -88,12 +95,14 @@ def apply_model(input_file, run_id, output_file):
     logger.info(f'reading the data from {input_file}...')
     df = read_dataframe(input_file)
     dicts = prepare_dictionaries(df)
+    transformer = preprocessor()
+    processed_dicts = transformer.transform(dicts)
 
     logger.info(f'loading the model with RUN_ID = {run_id}...')
     model = load_model(run_id)
 
     logger.info(f'applying the model...')
-    y_pred = model.predict(dicts)
+    y_pred = model.predict(processed_dicts)
 
     logger.info(f'saving the result to {output_file}...')
 

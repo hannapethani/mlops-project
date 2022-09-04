@@ -40,11 +40,8 @@ def read_dataframe(filename):
 @task
 def add_features(df_train, df_val):
 
-    # df_train = read_dataframe(train_path)
-    # df_val = read_dataframe(val_path)
-
-    print(len(df_train))
-    print(len(df_val))
+    print(f'Length - training dataset: {len(df_train)}')
+    print(f'Length - validation dataset: {len(df_val)}')
 
     categorical = ['rideable_type', 'start_station_id', 'end_station_id']
     numerical = ['duration']
@@ -104,6 +101,8 @@ def train_best_model(X_train, y_train, X_val, y_val, dv, best_result):
 
     with mlflow.start_run():
         
+        mlflow.set_tag('developer', 'hanna')
+
         print(f'Best result: {best_result}')
         mlflow.log_params(best_result)
 
@@ -115,11 +114,12 @@ def train_best_model(X_train, y_train, X_val, y_val, dv, best_result):
         print(f'RMSE: {rmse}')
         mlflow.log_metric('rmse', rmse)
 
-        with open("models/preprocessor.b", "wb") as f_out:
+        with open('models/preprocessor.b', 'wb') as f_out:
             pickle.dump(dv, f_out)
-        mlflow.log_artifact("models/preprocessor.b", artifact_path="preprocessor")
+        mlflow.log_artifact('models/preprocessor.b', artifact_path='preprocessor')
 
         mlflow.sklearn.log_model(lr, artifact_path = 'models')
+        print(f'default artifacts URI: {mlflow.get_artifact_uri()}')
 
 @flow(task_runner=SequentialTaskRunner())
 def main(train_path: str = './data/202204-capitalbikeshare-tripdata.csv',
