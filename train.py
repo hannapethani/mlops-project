@@ -114,16 +114,19 @@ def train_best_model(X_train, y_train, X_val, y_val, dv, best_result):
         print(f'RMSE: {rmse}')
         mlflow.log_metric('rmse', rmse)
 
+        with open('models/lin_reg.bin', 'wb') as f_out:
+            pickle.dump((dv, lr), f_out)
+        mlflow.sklearn.log_model(lr, artifact_path = 'models')
+
         with open('models/preprocessor.b', 'wb') as f_out:
             pickle.dump(dv, f_out)
         mlflow.log_artifact('models/preprocessor.b', artifact_path='preprocessor')
 
-        mlflow.sklearn.log_model(lr, artifact_path = 'models')
         print(f'default artifacts URI: {mlflow.get_artifact_uri()}')
 
 @flow(task_runner=SequentialTaskRunner())
-def main(train_path: str = './data/202204-capitalbikeshare-tripdata.csv',
-            val_path: str = './data/202205-capitalbikeshare-tripdata.csv'):
+def main(train_path: str = './data/202201-capitalbikeshare-tripdata.csv',
+            val_path: str = './data/202202-capitalbikeshare-tripdata.csv'):
 
     mlflow.set_tracking_uri('sqlite:///mlflow.db')
     mlflow.set_experiment('bike-rental-experiment')

@@ -61,7 +61,7 @@ def prepare_dictionaries(df: pd.DataFrame):
 
 def load_model(run_id):
 
-    logged_model = f'./mlruns/4/{run_id}/artifacts/models'
+    logged_model = f'./mlruns/4/{run_id}/artifacts/models' 
     model = mlflow.pyfunc.load_model(logged_model)
 
     return model
@@ -139,9 +139,9 @@ def ride_duration_prediction(run_id: str, run_date: datetime = None):
 def run():
 
     year = int(sys.argv[1]) # 2022
-    month = int(sys.argv[2]) # 02
+    month = int(sys.argv[2]) # 6
 
-    run_id = sys.argv[3]
+    run_id = sys.argv[3] # 8ed0e2cc3fe34622b9b3101c82d4add4
 
     ride_duration_prediction(
         run_id = run_id,
