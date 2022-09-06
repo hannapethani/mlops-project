@@ -44,7 +44,6 @@ def add_features(df_train, df_val):
     print(f'Length - validation dataset: {len(df_val)}')
 
     categorical = ['rideable_type', 'start_station_id', 'end_station_id']
-    numerical = ['duration']
 
     dv = DictVectorizer()
 

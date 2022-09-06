@@ -49,13 +49,8 @@ def prepare_dictionaries(df: pd.DataFrame):
 
     categorical = ['rideable_type', 'start_station_id', 'end_station_id']
     df[categorical] = df[categorical].astype(str)
-    
-    df['start_end_id'] = df['start_station_id'] + '_' + df['end_station_id']
 
-    categorical = ['rideable_type', 'start_end_id']
-    numerical = ['duration']
-
-    dicts = df[categorical + numerical].to_dict(orient='records')
+    dicts = df[categorical].to_dict(orient='records')
 
     return dicts
 
@@ -141,7 +136,7 @@ def run():
     year = int(sys.argv[1]) # 2022
     month = int(sys.argv[2]) # 6
 
-    run_id = sys.argv[3] # 8ed0e2cc3fe34622b9b3101c82d4add4
+    run_id = sys.argv[3] # abd6a134d1e546c8a0a1ea124f545a6d
 
     ride_duration_prediction(
         run_id = run_id,
