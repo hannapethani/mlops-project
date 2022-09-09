@@ -43,26 +43,27 @@ def load_data(filename):
     return data
 
 @task
-def run_evidently(ref_data, data):
+def run_evidently(ref_data, target_data):
     profile = Profile(sections = [DataDriftProfileSection(), RegressionPerformanceProfileSection()])
     mapping = ColumnMapping(prediction = 'prediction',  categorical_features = ['rideable_type', 'start_station_id', 'end_station_id'], 
                             datetime_features = [])
-    profile.calculate(ref_data, data, mapping)
+    profile.calculate(ref_data, target_data, mapping)
 
     dashboard = Dashboard(tabs = [DataDriftTab(), RegressionPerformanceTab(verbose_level=0)])
-    dashboard.calculate(ref_data, data, mapping)
+    dashboard.calculate(ref_data, target_data, mapping)
+
     return json.loads(profile.json()), dashboard
 
-# @task
-# def save_html_report(result):
-#     result[1].save('evidently_report_example.html')
+@task
+def save_html_report(result):
+    result[1].save('evidently_report_example.html')
 
 @flow
 def batch_analyze():
     target_data = load_data('./data/202206-capitalbikeshare-tripdata.csv')
     ref_data = load_data('./data/202201-capitalbikeshare-tripdata.csv')
     result = run_evidently(ref_data, target_data)
-    # save_html_report(result)
+    save_html_report(result)
 
 batch_analyze()
 
