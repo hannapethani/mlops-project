@@ -103,6 +103,7 @@ def train_best_model(X_train, y_train, X_val, y_val, dv, best_result):
         mlflow.set_tag('developer', 'hanna')
 
         print(f'Best result: {best_result}')
+        # log best parameters
         mlflow.log_params(best_result)
 
         lr = Ridge(**best_result)
@@ -113,9 +114,14 @@ def train_best_model(X_train, y_train, X_val, y_val, dv, best_result):
         print(f'RMSE: {rmse}')
         mlflow.log_metric('rmse', rmse)
 
+        # log the model and register as version 1
         with open('models/lin_reg.bin', 'wb') as f_out:
             pickle.dump((dv, lr), f_out)
-        mlflow.sklearn.log_model(lr, artifact_path = 'models')
+        mlflow.sklearn.log_model(
+            lr, 
+            artifact_path = 'models', 
+            registered_model_name='sklearn-ridge-model'
+            )
 
         with open('models/preprocessor.b', 'wb') as f_out:
             pickle.dump(dv, f_out)
