@@ -1,8 +1,8 @@
 # Instructions to running this ML project
 
 ## Requirements
-1. Dependencies are found in: requirements.txt
-2. Data folder containing these files from https://s3.amazonaws.com/capitalbikeshare-data/index.html: 
+1. Dependencies found in: ```requirements.txt```
+2. ```./data``` folder containing these files from https://s3.amazonaws.com/capitalbikeshare-data/index.html: 
     1. 202201-capitalbikeshare-tripdata.csv
     2. 202202-capitalbikeshare-tripdata.csv
     3. 202203-capitalbikeshare-tripdata.csv
