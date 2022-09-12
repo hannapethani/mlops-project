@@ -1,9 +1,13 @@
 # Instructions to running this ML project
 
 ## Requirements
-### Install libraries and prepare directories
+
+### 1 Install libraries 
 
 1. Dependencies found in: ```requirements.txt```
+
+### 2 Set up data
+
 2. ```./data``` folder containing these files from https://s3.amazonaws.com/capitalbikeshare-data/index.html: 
     1. 202201-capitalbikeshare-tripdata.csv
     2. 202202-capitalbikeshare-tripdata.csv
@@ -12,6 +16,9 @@
     5. 202205-capitalbikeshare-tripdata.csv
     6. 202206-capitalbikeshare-tripdata.csv
     7. 202207-capitalbikeshare-tripdata.csv
+
+### 3 Create new directories
+
 3. ```./mlruns``` folder
 4. ```./models``` folder
 5. For backfill, create subfolders:
