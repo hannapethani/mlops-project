@@ -12,8 +12,15 @@ This information can in turn support updates to the business plan based on predi
 * Modify pricing plans 
 * Forecast future earnings
 
-As this information is not required in real-time, the ML model deployment will run in batch mode. 
+As this information is not required in real-time, the ML model deployment runs in batch mode. 
 
 ## Data source
 
 Capital Bikeshare data was obtained from: https://s3.amazonaws.com/capitalbikeshare-data/index.html
+
+## Files
+
+|File name  |Description                   |
+|-----------|------------------------------|
+|1 train.py |Training and validation script|
+|2 score.py |Batch script                  |
