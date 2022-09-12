@@ -20,7 +20,10 @@ Capital Bikeshare data was obtained from: https://s3.amazonaws.com/capitalbikesh
 
 ## Files
 
-|File name  |Description                   |
-|-----------|------------------------------|
-|1 train.py |Training and validation script|
-|2 score.py |Batch script                  |
+|File name              |Description                         |
+|-----------------------|------------------------------------|
+|1 train.py             |Training and validation script      |
+|2 score.py             |Batch script                        |
+|3 score_deploy.py      |Deploy batch script on Cron schedule|
+|4 score_backfill.py    |Backfill predictions from score.py  |
+|5 prefect_monitoring.py|Model monitoring metrics            |
