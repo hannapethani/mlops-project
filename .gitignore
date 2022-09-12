@@ -18,3 +18,8 @@ __pycache__/
 **.terraform/
 **.terraform.lock*
 **terraform.tfstate*
+
+tmp/
+.vscode
+
+debug.py

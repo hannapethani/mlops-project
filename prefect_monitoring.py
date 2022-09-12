@@ -10,7 +10,7 @@ from evidently.model_profile import Profile
 from evidently.dashboard.tabs import DataDriftTab, RegressionPerformanceTab
 from evidently.model_profile.sections import (
     DataDriftProfileSection,
-    RegressionPerformanceProfileSection
+    RegressionPerformanceProfileSection,
 )
 
 
