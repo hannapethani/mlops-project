@@ -10,8 +10,10 @@
     5. 202205-capitalbikeshare-tripdata.csv
     6. 202206-capitalbikeshare-tripdata.csv
     7. 202207-capitalbikeshare-tripdata.csv
-3. For backfill:
-    1. New folder ```./bikeshare-duration-prediction/2022``` with subfolders:
+3. ```./mlruns``` folder
+4. ```./models``` folder
+5. For backfill:
+    1. ```./bikeshare-duration-prediction/2022``` folder with subfolders:
         1. ```03```
         2. ```04```
         3. ```05```
