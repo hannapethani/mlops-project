@@ -1,9 +1,10 @@
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 from prefect import flow
+from dateutil.relativedelta import relativedelta
 
 import score
+
 
 @flow
 def ride_duration_prediction_backfill():
@@ -13,9 +14,12 @@ def ride_duration_prediction_backfill():
     d = start_date
 
     while d <= end_date:
-        score.ride_duration_prediction(run_id = '8ed0e2cc3fe34622b9b3101c82d4add4', run_date = d)
+        score.ride_duration_prediction(
+            run_id='8ed0e2cc3fe34622b9b3101c82d4add4', run_date=d
+        )
 
-        d = d + relativedelta(months =  1)
+        d = d + relativedelta(months=1)
+
 
 if __name__ == '__main__':
     ride_duration_prediction_backfill()

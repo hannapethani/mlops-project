@@ -1,18 +1,14 @@
 import pickle
 
-import pandas as pd
-
-from sklearn.feature_extraction import DictVectorizer
-from sklearn.linear_model import Ridge
-from sklearn.metrics import mean_squared_error
-
 import mlflow
-from mlflow.tracking import MlflowClient
-
-from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
-
+import pandas as pd
 from prefect import flow, task
+from hyperopt import STATUS_OK, Trials, hp, tpe, fmin
+from mlflow.tracking import MlflowClient
+from sklearn.metrics import mean_squared_error
 from prefect.task_runners import SequentialTaskRunner
+from sklearn.linear_model import Ridge
+from sklearn.feature_extraction import DictVectorizer
 
 
 @task
@@ -23,7 +19,7 @@ def read_dataframe(filename):
     Output: new df
     """
     df = pd.read_csv(filename)
-    
+
     df['started_at'] = pd.to_datetime(df['started_at'])
     df['ended_at'] = pd.to_datetime(df['ended_at'])
 
@@ -32,12 +28,15 @@ def read_dataframe(filename):
 
     df = df[(df.duration >= 1) & (df.duration <= 120)]
 
-    df[['rideable_type', 'start_station_id', 'end_station_id']] = df[['rideable_type', 'start_station_id', 'end_station_id']].fillna(-1)
+    df[['rideable_type', 'start_station_id', 'end_station_id']] = df[
+        ['rideable_type', 'start_station_id', 'end_station_id']
+    ].fillna(-1)
     categorical = ['rideable_type', 'start_station_id', 'end_station_id']
 
     df[categorical] = df[categorical].astype(str)
-    
+
     return df
+
 
 @task
 def add_features(df_train, df_val):
@@ -49,10 +48,10 @@ def add_features(df_train, df_val):
 
     dv = DictVectorizer()
 
-    train_dicts = df_train[categorical].to_dict(orient = 'records')
+    train_dicts = df_train[categorical].to_dict(orient='records')
     X_train = dv.fit_transform(train_dicts)
 
-    val_dicts = df_val[categorical].to_dict(orient = 'records')
+    val_dicts = df_val[categorical].to_dict(orient='records')
     X_val = dv.transform(val_dicts)
 
     target = 'duration'
@@ -61,9 +60,9 @@ def add_features(df_train, df_val):
 
     return X_train, X_val, y_train, y_val, dv
 
+
 @task
 def train_model_search(X_train, y_train, X_val, y_val):
-
     def objective(params):
         with mlflow.start_run():
 
@@ -84,7 +83,7 @@ def train_model_search(X_train, y_train, X_val, y_val):
 
     search_space = {
         'fit_intercept': hp.choice('fit_intercept', intercepts),
-        'alpha': hp.loguniform('alpha', -3, 0)
+        'alpha': hp.loguniform('alpha', -3, 0),
     }
 
     best_result = fmin(
@@ -92,16 +91,17 @@ def train_model_search(X_train, y_train, X_val, y_val):
         space=search_space,
         algo=tpe.suggest,
         max_evals=10,
-        trials=Trials()
+        trials=Trials(),
     )
 
     return best_result
+
 
 @task
 def train_best_model(X_train, y_train, X_val, y_val, dv, best_result):
 
     with mlflow.start_run():
-        
+
         mlflow.set_tag('developer', 'hanna')
 
         print(f'Best result: {best_result}')
@@ -120,10 +120,8 @@ def train_best_model(X_train, y_train, X_val, y_val, dv, best_result):
         with open('models/lin_reg.bin', 'wb') as f_out:
             pickle.dump((dv, lr), f_out)
         mlflow.sklearn.log_model(
-            lr, 
-            artifact_path = 'models', 
-            registered_model_name='sklearn-ridge-model'
-            )
+            lr, artifact_path='models', registered_model_name='sklearn-ridge-model'
+        )
 
         with open('models/preprocessor.b', 'wb') as f_out:
             pickle.dump(dv, f_out)
@@ -131,9 +129,12 @@ def train_best_model(X_train, y_train, X_val, y_val, dv, best_result):
 
         print(f'default artifacts URI: {mlflow.get_artifact_uri()}')
 
+
 @flow(task_runner=SequentialTaskRunner())
-def main(train_path: str = './data/202201-capitalbikeshare-tripdata.csv',
-            val_path: str = './data/202202-capitalbikeshare-tripdata.csv'):
+def main(
+    train_path: str = './data/202201-capitalbikeshare-tripdata.csv',
+    val_path: str = './data/202202-capitalbikeshare-tripdata.csv',
+):
 
     mlflow.set_tracking_uri('sqlite:///mlflow.db')
     mlflow.set_experiment('bikeshare-experiment')
@@ -148,5 +149,6 @@ def main(train_path: str = './data/202201-capitalbikeshare-tripdata.csv',
     X_train, X_val, y_train, y_val, dv = add_features(X_train, X_val).result()
     best_result = train_model_search(X_train, y_train, X_val, y_val)
     train_best_model(X_train, y_train, X_val, y_val, dv, best_result)
+
 
 main()
