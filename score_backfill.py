@@ -1,9 +1,9 @@
-import score
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 from prefect import flow
 
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+import score
 
 @flow
 def ride_duration_prediction_backfill():

@@ -1,10 +1,13 @@
 import os
 import sys
 
-import pandas as pd
-
 import uuid
 import pickle
+
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
+import pandas as pd
 
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import Ridge
@@ -18,9 +21,6 @@ from hyperopt.pyll import scope
 
 from prefect import flow, task, get_run_logger
 from prefect.context import get_run_context
-
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 def generate_uuids(n):
     ride_ids = []
@@ -55,8 +55,13 @@ def prepare_dictionaries(df: pd.DataFrame):
     return dicts
 
 def load_model(run_id):
+    
+    experiment = mlflow.get_experiment_by_name('bikeshare-experiment')
+    # experiment_id = experiment.experiment_id
+    print(experiment)
+    # print(f'Experiment id: {experiment_id}')
 
-    logged_model = f'./mlruns/4/{run_id}/artifacts/models' 
+    logged_model = f'./mlruns/{run_id}/artifacts/models'
     model = mlflow.pyfunc.load_model(logged_model)
 
     return model
@@ -96,7 +101,7 @@ def apply_model(input_file, run_id, output_file):
     logger.info(f'loading the model with RUN_ID = {run_id}...')
     model = load_model(run_id)
 
-    logger.info(f'applying the model...')
+    logger.info('applying the model...')
     y_pred = model.predict(processed_dicts)
 
     logger.info(f'saving the result to {output_file}...')

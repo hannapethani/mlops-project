@@ -1,6 +1,6 @@
-import pandas as pd
-
 import pickle
+
+import pandas as pd
 
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import Ridge
@@ -10,16 +10,18 @@ import mlflow
 from mlflow.tracking import MlflowClient
 
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
-from hyperopt.pyll import scope
 
 from prefect import flow, task
 from prefect.task_runners import SequentialTaskRunner
 
-from datetime import timedelta
 
 @task
 def read_dataframe(filename):
-
+    """
+    Input: csv file
+    Methods: Get df from csv, add columns, fill nulls, exclude ride duration < 1 minute and > 120 minutes
+    Output: new df
+    """
     df = pd.read_csv(filename)
     
     df['started_at'] = pd.to_datetime(df['started_at'])
@@ -134,7 +136,11 @@ def main(train_path: str = './data/202201-capitalbikeshare-tripdata.csv',
             val_path: str = './data/202202-capitalbikeshare-tripdata.csv'):
 
     mlflow.set_tracking_uri('sqlite:///mlflow.db')
-    mlflow.set_experiment('bike-rental-experiment')
+    mlflow.set_experiment('bikeshare-experiment')
+
+    experiment = mlflow.get_experiment_by_name('bikeshare-experiment')
+    print(experiment)
+    print(f'Experiment id: {experiment.experiment_id}')
 
     X_train = read_dataframe(train_path)
     X_val = read_dataframe(val_path)
