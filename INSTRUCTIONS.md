@@ -18,3 +18,12 @@
     3. ```./bikeshare-duration-prediction/2022/05```
     4. ```./bikeshare-duration-prediction/2022/06```
     5. ```./bikeshare-duration-prediction/2022/07```
+
+## How-to
+
+1. Train model ----> ```python train.py```
+2. Batch script ----> ```python score.py year month run_id```
+    1. E.g. ```python score.py 2022 6 abd6a134d1e546c8a0a1ea124f545a6d```     
+3. Deploy batch on Cron schedule ---> ```python score_deploy.py```
+4. Backfill ---> ```python score_backfill.py```
+5. Monitoring ---> ```python prefect_monitoring.py```
